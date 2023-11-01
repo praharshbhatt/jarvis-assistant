@@ -1,0 +1,12 @@
+# Models
+models/.*
+
+# Data
+data/.*
+
+# Environment variables
+.env
+
+# Others
+.idea
+.vscode

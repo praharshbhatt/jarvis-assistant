@@ -1,0 +1,7 @@
+Cython @ file:///buildstream-build
+Mako @ file:///buildstream-build
+Markdown @ file:///buildstream-build
+MarkupSafe @ file:///buildstream-build
+meson==0.63.3
+Pygments @ file:///buildstream-build
+six @ file:///buildstream-build
