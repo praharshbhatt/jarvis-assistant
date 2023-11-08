@@ -6,6 +6,7 @@ JARVIS Assistant is a chat interface powered by advanced AI models, designed to 
 
 ## Screenshots
 ![LLM writing python program](assets/screenshots/screenshot-1.jpeg)
+![LLM writing python program](assets/screenshots/screenshot-2.jpeg)
 
 ## Table of Contents
 
