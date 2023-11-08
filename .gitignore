@@ -1,8 +1,11 @@
 # Models
-models/.*
+/models
 
 # Data
-data/.*
+/data
+
+# Python
+/jarvis/__pycache__
 
 # Environment variables
 .env

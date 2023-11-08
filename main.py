@@ -1,24 +1,24 @@
 import os
-from dotenv import load_dotenv
 import streamlit as st
 from jarvis.ai_model import AIModel
 from jarvis.url_handler import URLHandler
 
-is_loading = True
 
-# Load environment variables from .env file
-load_dotenv()
+# Initialize variables
+is_loading = True
+prompt = ""
 
 # Access environment variables
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
 # Define the dictionary of model names and associated model files
 model_names = {
-    "TheBloke/zephyr-7B-alpha-GGUF": [
-        "zephyr-7b-alpha.Q2_K.gguf",
-        "zephyr-7b-alpha.Q5_K_M.gguf",
+    "TheBloke/Llama-2-13B-chat-GGUF": ["llama-2-13b-chat.Q4_K_M.gguf"],
+    "TheBloke/Llama-2-7B-GGUF": ["llama-2-7b.Q4_K_M.gguf"],
+    "TheBloke/zephyr-7B-beta-GGUF": [
+        "zephyr-7b-beta.Q5_K_M.gguf",
     ],
-    "TheBloke/Llama-2-7b-Chat-GGUF": ["modelsllama-2-7b-chat.Q2_K.gguf"],
+    "TheBloke/Llama-2-7b-Chat-GGUF": ["llama-2-7b-chat.Q4_K_M.gguf"],
     "TheBloke/CodeLlama-7B-Instruct-GGUF": [
         "codellama-7b-instruct.Q8_0.gguf",
     ],
@@ -36,7 +36,7 @@ st.set_page_config(
 
 # Left column for model selection
 with st.sidebar:
-    st.title('JARVIS Assistant')
+    st.title("JARVIS Assistant")
 
     selected_model_name = st.selectbox("Model:", list(model_names.keys()))
 
@@ -47,7 +47,10 @@ with st.sidebar:
     if len(available_model_files) > 0:
         selected_model_file = st.selectbox("Model File:", available_model_files)
         # Determine the full model path (model_name + model_file)
-        full_model_path = f"models/{selected_model_file}"
+        if "http" in selected_model_file:
+            full_model_path = selected_model_file
+        else:
+            full_model_path = f"models/{selected_model_file}"
     else:
         selected_model_file = None
         quantization_enabled = False
@@ -83,7 +86,7 @@ with st.sidebar:
         HUGGINGFACE_API_KEY,
     )
 
-     # Text input field for entering a URL
+    # Text input field for entering a URL
     if st.text_input("Enter a URL to train the model", key="url_input", value=""):
         url = st.session_state.url_input
         base_directory = "data/training_data"
@@ -91,7 +94,11 @@ with st.sidebar:
         if url_handler.validate_url(url):
             result = url_handler.download_html(url)
             if result == "HTML content downloaded successfully.":
+                is_loading = True
+                print("HTML content downloaded successfully.")
                 ai_model.train(hard=True)
+                print("Model trained successfully.")
+                is_loading = False
     is_loading = False
 
 
@@ -109,10 +116,10 @@ def chat_interface():
             st.write(message["content"])
 
     def clear_chat_history():
+        ai_model.reset()
         st.session_state.messages = [
             {"role": "assistant", "content": "How may I assist you today?"}
         ]
-        ai_model.clear_memory()
 
     st.sidebar.button("Clear Chat History", on_click=clear_chat_history)
 
@@ -137,6 +144,7 @@ def chat_interface():
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
+                ai_model.continue_chat = 0
                 chat_stream = ai_model.query(prompt)
                 placeholder = st.empty()
                 full_response = ""
@@ -150,16 +158,6 @@ def chat_interface():
             len(st.session_state.messages) > 1
             and st.session_state.messages[-1]["content"] == "/continue"
         ):
-            # remove the "<|> ..." from the starting of the response
-            if full_response.startswith("<|> ..."):
-                full_response = full_response[7:]
-            if full_response.startswith("<|>"):
-                full_response = full_response[3:]
-            if full_response.startswith("..."):
-                full_response = full_response[3:]
-            if full_response.startswith("<∣assistant∣>"):
-                full_response = full_response[13:]
-            
             # merge the response with the previous assistant response
             st.session_state.messages[-2]["content"] = (
                 st.session_state.messages[-2]["content"] + full_response
@@ -168,7 +166,6 @@ def chat_interface():
         else:
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
-
 
 if not is_loading:
     chat_interface()
