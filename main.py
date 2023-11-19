@@ -1,8 +1,9 @@
 import os
+import json
 import streamlit as st
 from jarvis.ai_model import AIModel
 from jarvis.url_handler import URLHandler
-
+from jarvis.model_manager import ModelManager
 
 # Initialize variables
 is_loading = True
@@ -11,19 +12,10 @@ prompt = ""
 # Access environment variables
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
-# Define the dictionary of model names and associated model files
-model_names = {
-    "TheBloke/Llama-2-13B-chat-GGUF": ["llama-2-13b-chat.Q4_K_M.gguf"],
-    "TheBloke/Llama-2-7B-GGUF": ["llama-2-7b.Q4_K_M.gguf"],
-    "TheBloke/zephyr-7B-beta-GGUF": [
-        "zephyr-7b-beta.Q5_K_M.gguf",
-    ],
-    "TheBloke/Llama-2-7b-Chat-GGUF": ["llama-2-7b-chat.Q4_K_M.gguf"],
-    "TheBloke/CodeLlama-7B-Instruct-GGUF": [
-        "codellama-7b-instruct.Q8_0.gguf",
-    ],
-    # "meta-llama/Llama-2-7b-chat-hf": ["llama-2-7b-chat.Q2_K.gguf"],
-}
+# Load models from JSON file
+with open("models/models.json") as f:
+    models = json.load(f)
+
 
 # Streamlit UI components
 st.set_page_config(
@@ -38,28 +30,28 @@ st.set_page_config(
 with st.sidebar:
     st.title("JARVIS Assistant")
 
-    selected_model_name = st.selectbox("Model:", list(model_names.keys()))
-
-    # Determine the available model files for the selected model
-    available_model_files = model_names[selected_model_name]
-
-    # Streamlit widget for selecting the model file
-    if len(available_model_files) > 0:
-        selected_model_file = st.selectbox("Model File:", available_model_files)
-        # Determine the full model path (model_name + model_file)
-        if "http" in selected_model_file:
-            full_model_path = selected_model_file
-        else:
-            full_model_path = f"models/{selected_model_file}"
-    else:
-        selected_model_file = None
-        quantization_enabled = False
-        full_model_path = None
+    # Model Selection
+    selected_model = st.selectbox("Model:", list(models.keys()))
+    available_model_files = models[selected_model]
+    selected_model_file = st.selectbox("Model File:", available_model_files)
+    full_model_path = f"models/{selected_model_file}"
 
     # Check if the selected model file requires quantization (GGUF models or GGML models)
-    quantization_enabled = (
-        "GGUF" in selected_model_name or "GGML" in selected_model_name
-    )
+    quantization_enabled = "GGUF" in selected_model or "GGML" in selected_model
+
+    # Download the model file if it doesn't exist
+    if not os.path.exists(full_model_path):
+        st.write("Downloading model...")
+        manager = ModelManager(
+            selected_model,
+            selected_model_file,
+            "models",
+        )
+        success = manager.download_model()
+        if success:
+            st.write("Model downloaded successfully.")
+        else:
+            st.write("Model download failed.")
 
     # Mute button
     # should_speak = True
@@ -80,7 +72,7 @@ with st.sidebar:
 
     st.write("Calling the function...")
     ai_model = load_model(
-        selected_model_name,
+        selected_model,
         full_model_path,
         quantization_enabled,
         HUGGINGFACE_API_KEY,
@@ -166,6 +158,7 @@ def chat_interface():
         else:
             message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
+
 
 if not is_loading:
     chat_interface()

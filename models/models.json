@@ -1,0 +1,26 @@
+{
+    "TheBloke/Llama-2-7B-GGUF": [
+        "llama-2-7b.Q5_K_M.gguf"
+    ],
+    "TheBloke/Llama-2-13B-chat-GGUF": [
+        "llama-2-13b-chat.Q4_K_M.gguf"
+    ],
+    "TheBloke/deepseek-coder-5.7bmqa-base-GGUF": [
+        "deepseek-coder-5.7bmqa-base.Q5_K_M.gguf"
+    ],
+    "TheBloke/deepseek-coder-1.3b-instruct-GGUF": [
+        "deepseek-coder-1.3b-instruct.Q5_K_M.gguf"
+    ],
+    "TheBloke/zephyr-7B-beta-GGUF": [
+        "zephyr-7b-beta.Q5_K_M.gguf"
+    ],
+    "TheBloke/Llama-2-7b-Chat-GGUF": [
+        "llama-2-7b-chat.Q4_K_M.gguf"
+    ],
+    "TheBloke/CodeLlama-7B-Instruct-GGUF": [
+        "codellama-7b-instruct.Q8_0.gguf"
+    ],
+    "meta-llama/Llama-2-7b-chat-hf": [
+        "llama-2-7b-chat.Q2_K.gguf"
+    ]
+}

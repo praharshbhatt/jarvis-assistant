@@ -20,7 +20,7 @@ from llama_index.prompts import Prompt
 from llama_index.chat_engine.condense_question import CondenseQuestionChatEngine
 from llama_index.memory import ChatMemoryBuffer
 from llama_index.llms import ChatMessage, MessageRole
-from .text_to_speech import TextToSpeech
+# from .text_to_speech import TextToSpeech
 import shutil
 import random
 import datetime
@@ -108,7 +108,7 @@ class AIModel:
 
         self.train()
 
-        self.tts = TextToSpeech()
+        # self.tts = TextToSpeech()
 
         self.continue_count = 0
 
@@ -145,24 +145,6 @@ Your Job is to assist Mr. 'Praharsh Bhatt' with his queries.
 - When you get the prompt '/continue', you continue your response from the last message, without any text preceding it.
 [/INST]
 """
-        self.system_prompt = """
-You are a blog writing helpers for Multiverse Software.
-
-- end your responses with '/end' token.
-- When Users says '/continue', you should continue your response from the last message, without any text preceding it.
-        """
-        # Prompt template: Zephyr
-        #         self.system_prompt = """
-        # <|system|>
-        # You are Iron Man's JARVIS.
-        # Your Job is to assist Mr. 'Praharsh Bhatt' with his queries.
-        # - At the end of your response, add '/end' to end the conversation.
-        # - When you get the prompt '/continue', you continue your response from the last message, without any text preceding it.
-        # </s>
-        # <|user|>
-        # {prompt}</s>
-        # <|assistant|>
-        #         """
 
         self.chat_engine = self.index.as_chat_engine(
             service_context=self.service_context,
@@ -190,14 +172,14 @@ You are a blog writing helpers for Multiverse Software.
             )
 
         # If the response ends with '/end', remove it
-        if "/end" in response:
-            response = response.replace("/end", "")
-        else:
-            if (
-                self.continue_count < 4
-            ):  # 4 is the max number of times the model can continue
-                self.continue_count += 1
-                response = response + self.query("/continue")
+        # if "/end" in response:
+        #     response = response.replace("/end", "")
+        # else:
+        #     if (
+        #         self.continue_count < 4
+        #     ):  # 4 is the max number of times the model can continue
+        #         self.continue_count += 1
+        #         response = response + self.query("/continue")
 
         # if should_speak:
         #     self.tts.speak(response)
