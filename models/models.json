@@ -1,9 +1,9 @@
 {
-    "TheBloke/Llama-2-7B-GGUF": [
-        "llama-2-7b.Q5_K_M.gguf"
-    ],
     "TheBloke/Llama-2-13B-chat-GGUF": [
         "llama-2-13b-chat.Q4_K_M.gguf"
+    ],
+    "TheBloke/Llama-2-7B-GGUF": [
+        "llama-2-7b.Q5_K_M.gguf"
     ],
     "TheBloke/deepseek-coder-5.7bmqa-base-GGUF": [
         "deepseek-coder-5.7bmqa-base.Q5_K_M.gguf"
@@ -22,5 +22,8 @@
     ],
     "meta-llama/Llama-2-7b-chat-hf": [
         "llama-2-7b-chat.Q2_K.gguf"
+    ],
+    "TheBloke/Chronos-Hermes-13b-v2-GGUF": [
+        "chronos-hermes-13b-v2.Q5_K_S.gguf"
     ]
 }
