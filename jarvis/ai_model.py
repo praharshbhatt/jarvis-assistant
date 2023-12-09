@@ -46,14 +46,14 @@ class AIModel:
                 # optionally, you can set the path to a pre-downloaded model instead of model_url
                 model_path=model_path,
                 temperature=0.1,
-                max_new_tokens=512,
+                max_new_tokens=2048,
                 # llama2 has a context window of 4096 tokens, but we set it lower to allow for some wiggle room
                 context_window=3900,
                 # kwargs to pass to __call__()
                 generate_kwargs={},
                 # kwargs to pass to __init__()
                 # set to at least 1 to use GPU
-                model_kwargs={"n_gpu_layers": 15},
+                model_kwargs={"n_gpu_layers": -1},
                 # transform inputs into Llama2 format
                 messages_to_prompt=messages_to_prompt,
                 completion_to_prompt=completion_to_prompt,
@@ -73,7 +73,7 @@ class AIModel:
                 model_name,
                 cache_dir="./model/",
                 use_auth_token=api_key,
-                load_in_4bit=True,
+                # load_in_4bit=True,
             )
 
             # Create a HF LLM using the llama index wrapper
@@ -134,7 +134,6 @@ class AIModel:
             ).load_data()
             self.index = VectorStoreIndex.from_documents(data)
             self.index.storage_context.persist("data/indices")
-        # Prompt template: Llama-2-Chat
         self.system_prompt = """
 [INST]
 <<SYS>>
@@ -145,7 +144,6 @@ Your Job is to assist Mr. 'Praharsh Bhatt' with his queries.
 - When you get the prompt '/continue', you continue your response from the last message, without any text preceding it.
 [/INST]
 """
-
         self.chat_engine = self.index.as_chat_engine(
             service_context=self.service_context,
             verbose=True,
@@ -172,14 +170,14 @@ Your Job is to assist Mr. 'Praharsh Bhatt' with his queries.
             )
 
         # If the response ends with '/end', remove it
-        # if "/end" in response:
-        #     response = response.replace("/end", "")
-        # else:
-        #     if (
-        #         self.continue_count < 4
-        #     ):  # 4 is the max number of times the model can continue
-        #         self.continue_count += 1
-        #         response = response + self.query("/continue")
+        if "/end" in response:
+            response = response.replace("/end", "")
+        else:
+            if (
+                self.continue_count < 4
+            ):  # 4 is the max number of times the model can continue
+                self.continue_count += 1
+                response = response + self.query("/continue")
 
         # if should_speak:
         #     self.tts.speak(response)
