@@ -9,7 +9,11 @@ JARVIS Assistant is a chat interface powered by advanced AI models, designed to 
 ![LLM writing python program](assets/screenshots/screenshot-2.jpeg)
 
 ## Tutorials
+
+### Youtube Video Tutorial
 [![Youtube Tutorial](https://img.youtube.com/vi/cD9WmNaTIz8/0.jpg)](https://www.youtube.com/watch?v=cD9WmNaTIz8)
+
+### Blog Tutorial
 [![Blog](https://images.prismic.io/multiverseapp/dacbc4a4-a49b-4dac-b3f0-a9525649d442_Local+ChatGPT+on+personal+data+for+Free.png?auto=compress%2Cformat&fit=max&w=1280&h=720&fm=webp)](https://multiverseapp.com/blog/how-to-run-your-own-chatgpt-locally-for-your-business/)
 
 
@@ -89,9 +93,6 @@ streamlit run main.py
 
 # Customization
 You can customize the chat interface by modifying the main.py file. You can change the UI layout, add new models, or implement additional features to suit your needs.
-
-# Data Storage
-The repository provides a data storage mechanism for website data collection. The collected data is stored in the data/training_data/websites directory.
 
 # License
 This project is licensed under the terms of the MIT license. See the LICENSE file for more details.
